@@ -14,14 +14,16 @@ function createNewMeteor() {
 }
 
 function drawEndScreen(score) {
-  fill(color(90, 100, 120, 0.9));
+  fill(color(90, 100, 120, 50));
   rectMode(CENTER);
   rect(width / 2, height / 2, 500, 500, 20);
 
   fill(255);
-  textSize(20);
   textAlign(CENTER);
-  text(`Final Score: ${score}`, width / 2, 100);
+  textSize(30);
+  text("GAME OVER", width / 2, 100);
+  textSize(20);
+  text(`Final Score: ${score}`, width / 2, 200);
 }
 
 function displayHealth(planet) {

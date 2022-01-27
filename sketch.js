@@ -4,28 +4,32 @@
 
 const modes = {
   EASY: {
+    maxMeteors: 3,
     meteorSpawnSpeed: 3000,
     rocketSpawnSpeed: 400,
   },
   MEDIUM: {
+    maxMeteors: 5,
     meteorSpawnSpeed: 2000,
     rocketSpawnSpeed: 200,
   },
   HARD: {
+    maxMeteors: 7,
     meteorSpawnSpeed: 1000,
     rocketSpawnSpeed: 200,
   },
   IMPOSSIBLE: {
+    maxMeteors: 10,
     meteorSpawnSpeed: 500,
     rocketSpawnSpeed: 200,
   },
 };
 
-const MODE = modes.HARD;
-let SIZE;
-const MAX_METEORS = 5;
+const MODE = modes.MEDIUM;
+const MAX_METEORS = MODE.maxMeteors;
 let METEOR_SPAWN_SPEED = MODE.meteorSpawnSpeed;
 let ROCKET_SPAWN_SPEED = MODE.rocketSpawnSpeed;
+const INCREASE_DIFFICULTY_RATE = 10 * 1000; // 10s
 
 const states = {
   HOME: 1,
@@ -34,10 +38,12 @@ const states = {
   END: 4,
 };
 
+let SIZE;
 let state;
 let planet;
 let launcher;
 let meteors;
+let game_timer;
 let meteor_timer;
 let rocket_timer;
 let score;
@@ -49,6 +55,8 @@ function setup() {
   planet = new Planet(width / 2, 1.85 * height, width);
   launcher = new RocketLauncher(height - 100);
   meteors = new Set([createNewMeteor()]);
+
+  game_timer = millis();
   meteor_timer = millis();
   rocket_timer = millis();
   score = 0;
@@ -121,4 +129,9 @@ function playLoop() {
 
   launcher.update();
   launcher.display();
+
+  // increase meteor speed and/or spawn rate
+  if (millis() - game_timer >= INCREASE_DIFFICULTY_RATE) {
+    METEOR_SPAWN_SPEED = max(METEOR_SPAWN_SPEED - 200, 300);
+  }
 }
