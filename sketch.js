@@ -38,6 +38,10 @@ function gameFsm() {
     case states.PLAY:
       if (playLoop()) state = states.END;
       break;
+
+    case states.END:
+      drawEndScreen();
+      break;
   }
 }
 
@@ -68,6 +72,9 @@ function playLoop() {
   planet.display();
   planet.update();
 
+  // show health bar here!
+  displayHealth(planet);
+
   launcher.update();
   launcher.display();
 }
@@ -80,4 +87,22 @@ function createNewMeteor() {
   const y = -radius;
 
   return new Meteor(x, y, radius);
+}
+
+function drawEndScreen() {
+  fill(color(90, 190, 220, 0.9));
+  rectMode(CENTER);
+  rect(width / 2, height / 2, 500, 500, 20);
+}
+
+function displayHealth(planet) {
+  const RECT_WIDTH = 150;
+  const HEALTH_WIDTH = (planet.health / planet.maxhealth) * RECT_WIDTH;
+
+  rectMode(CORNER);
+  fill(200);
+  rect(width - RECT_WIDTH - 20, 20, RECT_WIDTH, 10);
+
+  fill(color(200, 30, 40));
+  rect(width - RECT_WIDTH - 20, 20, HEALTH_WIDTH, 10);
 }

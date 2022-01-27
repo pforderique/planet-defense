@@ -6,7 +6,8 @@ class Planet extends CircleObject {
     this.color = this.PURPLE;
     this.showRedForFrames = 5;
     this.counter = 0;
-    this.health = 100;
+    this.maxhealth = 100;
+    this.health = this.maxhealth;
   }
 
   update() {
