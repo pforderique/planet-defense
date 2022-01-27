@@ -2,10 +2,30 @@
  * Planet Defense
  */
 
-const SIZE = 600;
+const modes = {
+  EASY: {
+    meteorSpawnSpeed: 3000,
+    rocketSpawnSpeed: 400,
+  },
+  MEDIUM: {
+    meteorSpawnSpeed: 2000,
+    rocketSpawnSpeed: 200,
+  },
+  HARD: {
+    meteorSpawnSpeed: 1000,
+    rocketSpawnSpeed: 200,
+  },
+  IMPOSSIBLE: {
+    meteorSpawnSpeed: 500,
+    rocketSpawnSpeed: 200,
+  },
+};
+
+const MODE = modes.HARD;
+let SIZE;
 const MAX_METEORS = 5;
-const METEOR_SPAWN_SPEED = 3000;
-const ROCKET_SPAWN_SPEED = 500;
+let METEOR_SPAWN_SPEED = MODE.meteorSpawnSpeed;
+let ROCKET_SPAWN_SPEED = MODE.rocketSpawnSpeed;
 
 const states = {
   HOME: 1,
@@ -20,8 +40,10 @@ let launcher;
 let meteors;
 let meteor_timer;
 let rocket_timer;
+let score;
 
 function setup() {
+  SIZE = min(600, window.innerWidth);
   createCanvas(SIZE, SIZE);
   state = states.PLAY;
   planet = new Planet(width / 2, 1.85 * height, width);
@@ -29,6 +51,7 @@ function setup() {
   meteors = new Set([createNewMeteor()]);
   meteor_timer = millis();
   rocket_timer = millis();
+  score = 0;
 }
 
 function draw() {
@@ -42,7 +65,7 @@ function gameFsm() {
       break;
 
     case states.END:
-      drawEndScreen();
+      drawEndScreen(score);
       break;
   }
 }
@@ -74,6 +97,7 @@ function playLoop() {
       if (meteor.collidesWith(rocket)) {
         if (launcher.destroyRocket(rocket) && meteor.decreaseSize() === 0) {
           meteors.delete(meteor);
+          score += 1;
         }
       }
     }
@@ -92,8 +116,8 @@ function playLoop() {
   planet.display();
   planet.update();
 
-  // show health bar here!
   displayHealth(planet);
+  displayScore(score);
 
   launcher.update();
   launcher.display();

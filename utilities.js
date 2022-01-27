@@ -13,10 +13,15 @@ function createNewMeteor() {
   return new Meteor(x, y, radius);
 }
 
-function drawEndScreen() {
-  fill(color(90, 190, 220, 0.9));
+function drawEndScreen(score) {
+  fill(color(90, 100, 120, 0.9));
   rectMode(CENTER);
   rect(width / 2, height / 2, 500, 500, 20);
+
+  fill(255);
+  textSize(20);
+  textAlign(CENTER);
+  text(`Final Score: ${score}`, width / 2, 100);
 }
 
 function displayHealth(planet) {
@@ -29,4 +34,10 @@ function displayHealth(planet) {
 
   fill(color(200, 30, 40));
   rect(width - RECT_WIDTH - 20, 20, HEALTH_WIDTH, 10);
+}
+
+function displayScore(score) {
+  fill(255);
+  textSize(20);
+  text(`Score: ${score}`, 10, 30);
 }
