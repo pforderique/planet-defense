@@ -13,6 +13,19 @@ function createNewMeteor() {
   return new Meteor(x, y, radius);
 }
 
+function drawPauseScreen() {
+  fill(color(90, 100, 120, 50));
+  rectMode(CENTER);
+  rect(width / 2, height / 2, 400, 400, 20);
+
+  fill(255);
+  textAlign(CENTER);
+  textSize(30);
+  text("PAUSED", width / 2, 200);
+  textSize(20);
+  text("Click anywhere to resume", width / 2, height - 200);
+}
+
 function drawEndScreen(score) {
   fill(color(90, 100, 120, 50));
   rectMode(CENTER);
@@ -21,9 +34,11 @@ function drawEndScreen(score) {
   fill(255);
   textAlign(CENTER);
   textSize(30);
-  text("GAME OVER", width / 2, 100);
+  text("GAME OVER", width / 2, 200);
   textSize(20);
-  text(`Final Score: ${score}`, width / 2, 200);
+  text(`Final Score: ${score}`, width / 2, 250);
+
+  text("Click anywhere to play again", width / 2, height - 100);
 }
 
 function displayHealth(planet) {

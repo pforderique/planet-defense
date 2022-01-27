@@ -26,10 +26,10 @@ const modes = {
 };
 
 const MODE = modes.MEDIUM;
-const MAX_METEORS = MODE.maxMeteors;
+const INCREASE_DIFFICULTY_RATE = 30 * 1000; // 30s
+let MAX_METEORS = MODE.maxMeteors;
 let METEOR_SPAWN_SPEED = MODE.meteorSpawnSpeed;
 let ROCKET_SPAWN_SPEED = MODE.rocketSpawnSpeed;
-const INCREASE_DIFFICULTY_RATE = 10 * 1000; // 10s
 
 const states = {
   HOME: 1,
@@ -52,24 +52,21 @@ function setup() {
   SIZE = min(600, window.innerWidth);
   createCanvas(SIZE, SIZE);
   state = states.PLAY;
-  planet = new Planet(width / 2, 1.85 * height, width);
-  launcher = new RocketLauncher(height - 100);
-  meteors = new Set([createNewMeteor()]);
-
-  game_timer = millis();
-  meteor_timer = millis();
-  rocket_timer = millis();
-  score = 0;
+  resetGame();
 }
 
 function draw() {
-  gameFsm(); // have another in mouseClicked for transitioning to PAUSE
+  gameFsm();
 }
 
 function gameFsm() {
   switch (state) {
     case states.PLAY:
       if (playLoop()) state = states.END;
+      break;
+
+    case states.PAUSE:
+      drawPauseScreen();
       break;
 
     case states.END:
@@ -134,4 +131,39 @@ function playLoop() {
   if (millis() - game_timer >= INCREASE_DIFFICULTY_RATE) {
     METEOR_SPAWN_SPEED = max(METEOR_SPAWN_SPEED - 200, 300);
   }
+}
+
+function mouseClicked() {
+  switch (state) {
+    case states.PAUSE:
+      state = states.PLAY;
+      break;
+
+    case states.END:
+      resetGame();
+      state = states.PLAY;
+      break;
+  }
+}
+
+function doubleClicked() {
+  switch (state) {
+    case states.PLAY:
+      state = states.PAUSE;
+      break;
+  }
+}
+
+function resetGame() {
+  MAX_METEORS = MODE.maxMeteors;
+  METEOR_SPAWN_SPEED = MODE.meteorSpawnSpeed;
+  ROCKET_SPAWN_SPEED = MODE.rocketSpawnSpeed;
+  planet = new Planet(width / 2, 1.85 * height, width);
+  launcher = new RocketLauncher(height - 100);
+  meteors = new Set([createNewMeteor()]);
+
+  game_timer = millis();
+  meteor_timer = millis();
+  rocket_timer = millis();
+  score = 0;
 }
