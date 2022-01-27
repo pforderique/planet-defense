@@ -9,6 +9,7 @@ class Meteor extends CircleObject {
       { x: (3 * width) / 4, y: height },
     ];
     this.target = randChoice(targets);
+    this.speed = 2;
   }
 
   update() {
@@ -16,8 +17,8 @@ class Meteor extends CircleObject {
     const xdiff = this.target.x - this.x;
     const ydiff = this.target.y - this.y;
 
-    // move in the normal direction
-    this.x += xdiff / mag;
-    this.y += ydiff / mag;
+    // move in the normal direction times the speed multiplier
+    this.x += this.speed * (xdiff / mag);
+    this.y += this.speed * (ydiff / mag);
   }
 }
