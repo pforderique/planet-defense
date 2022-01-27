@@ -6,6 +6,14 @@ const SIZE = 600;
 const MAX_METEORS = 5;
 const SPAWN_SPEED = 5000;
 
+const states = {
+  HOME: 1,
+  PLAY: 2,
+  PAUSE: 3,
+  END: 4,
+};
+
+let state;
 let planet;
 let launcher;
 let meteors;
@@ -14,6 +22,7 @@ let rocket_timer;
 
 function setup() {
   createCanvas(SIZE, SIZE);
+  state = states.PLAY;
   planet = new Planet(width / 2, 1.85 * height, width);
   launcher = new RocketLauncher(height - 110);
   meteors = new Set([createNewMeteor()]);
@@ -21,10 +30,19 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  gameFsm(); // have another in mouseClicked for transitioning to PAUSE
+}
 
-  planet.display();
-  planet.update();
+function gameFsm() {
+  switch (state) {
+    case states.PLAY:
+      if (playLoop()) state = states.END;
+      break;
+  }
+}
+
+function playLoop() {
+  background(0);
 
   // create a new meteor every now and then
   if (meteors.size < MAX_METEORS && millis() - meteor_timer >= SPAWN_SPEED) {
@@ -37,11 +55,18 @@ function draw() {
     meteor.update();
     if (meteor.collidesWith(planet)) {
       meteors.delete(meteor);
-      planet.getHit(meteor);
+
+      // check if this collision causes game to be over
+      if (planet.getHit(meteor) === 0) {
+        return true;
+      }
     } else {
       meteor.display();
     }
   }
+
+  planet.display();
+  planet.update();
 
   launcher.update();
   launcher.display();
