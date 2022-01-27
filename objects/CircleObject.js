@@ -8,7 +8,7 @@ class CircleObject {
 
   /**
    *
-   * @param {CicleObject} other
+   * @param {CircleObject} other
    */
   collidesWith(other) {
     const d = dist(this.x, this.y, other.x, other.y);
@@ -20,4 +20,3 @@ class CircleObject {
     ellipse(this.x, this.y, this.radius * 2);
   }
 }
-e;
