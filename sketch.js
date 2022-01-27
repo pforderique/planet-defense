@@ -4,7 +4,8 @@
 
 const SIZE = 600;
 const MAX_METEORS = 5;
-const SPAWN_SPEED = 5000;
+const METEOR_SPAWN_SPEED = 3000;
+const ROCKET_SPAWN_SPEED = 500;
 
 const states = {
   HOME: 1,
@@ -24,9 +25,10 @@ function setup() {
   createCanvas(SIZE, SIZE);
   state = states.PLAY;
   planet = new Planet(width / 2, 1.85 * height, width);
-  launcher = new RocketLauncher(height - 110);
+  launcher = new RocketLauncher(height - 100);
   meteors = new Set([createNewMeteor()]);
   meteor_timer = millis();
+  rocket_timer = millis();
 }
 
 function draw() {
@@ -48,8 +50,17 @@ function gameFsm() {
 function playLoop() {
   background(0);
 
+  // create a new rocket every now and then
+  if (millis() - rocket_timer >= ROCKET_SPAWN_SPEED) {
+    launcher.shoot();
+    rocket_timer = millis();
+  }
+
   // create a new meteor every now and then
-  if (meteors.size < MAX_METEORS && millis() - meteor_timer >= SPAWN_SPEED) {
+  if (
+    meteors.size < MAX_METEORS &&
+    millis() - meteor_timer >= METEOR_SPAWN_SPEED
+  ) {
     meteors.add(createNewMeteor());
     meteor_timer = millis();
   }
@@ -57,13 +68,22 @@ function playLoop() {
   // update meteor, check collisions, and display
   for (const meteor of meteors) {
     meteor.update();
+
+    // check meteor on rocket collisions
+    for (const rocket of launcher.rockets) {
+      if (meteor.collidesWith(rocket)) {
+        if (launcher.destroyRocket(rocket) && meteor.decreaseSize() === 0) {
+          meteors.delete(meteor);
+        }
+      }
+    }
+
+    // check meteor on planet collisions
     if (meteor.collidesWith(planet)) {
       meteors.delete(meteor);
 
       // check if this collision causes game to be over
-      if (planet.getHit(meteor) === 0) {
-        return true;
-      }
+      if (planet.getHit(meteor) === 0) return true;
     } else {
       meteor.display();
     }
@@ -77,32 +97,4 @@ function playLoop() {
 
   launcher.update();
   launcher.display();
-}
-
-function createNewMeteor() {
-  const radius = random(3, 40);
-  const SIDEBUFFER = 100;
-
-  const x = random(-SIDEBUFFER, width + SIDEBUFFER);
-  const y = -radius;
-
-  return new Meteor(x, y, radius);
-}
-
-function drawEndScreen() {
-  fill(color(90, 190, 220, 0.9));
-  rectMode(CENTER);
-  rect(width / 2, height / 2, 500, 500, 20);
-}
-
-function displayHealth(planet) {
-  const RECT_WIDTH = 150;
-  const HEALTH_WIDTH = (planet.health / planet.maxhealth) * RECT_WIDTH;
-
-  rectMode(CORNER);
-  fill(200);
-  rect(width - RECT_WIDTH - 20, 20, RECT_WIDTH, 10);
-
-  fill(color(200, 30, 40));
-  rect(width - RECT_WIDTH - 20, 20, HEALTH_WIDTH, 10);
 }

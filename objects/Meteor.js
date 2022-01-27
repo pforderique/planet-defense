@@ -8,8 +8,17 @@ class Meteor extends CircleObject {
       { x: width / 2, y: height },
       { x: (3 * width) / 4, y: height },
     ];
+    this.minSize = 10;
     this.target = randChoice(targets);
-    this.speed = 2;
+    this.speed = 1;
+  }
+
+  decreaseSize() {
+    const sizeDecrease = 5;
+    if (this.radius - sizeDecrease <= this.minSize) return 0;
+
+    this.radius = max(this.radius - sizeDecrease, 0);
+    return this.radius;
   }
 
   update() {
