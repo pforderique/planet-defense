@@ -5,8 +5,8 @@ class Button {
     this.text = text;
     this.color = color;
     this.onClick = onClick;
-    this.width = 80;
-    this.height = 30;
+    this.width = 100;
+    this.height = 40;
   }
 
   display() {
@@ -14,8 +14,8 @@ class Button {
     fill(this.color);
     rect(this.x, this.y, this.width, this.height, 10);
 
-    fill(0);
-    textSize(10);
+    fill(255);
+    textSize(15);
     textAlign(CENTER);
     text(this.text, this.x, this.y + 4);
   }

@@ -75,7 +75,7 @@ function setup() {
     gamemodeButtons.push(
       new Button(
         (i * width) / 5,
-        width / 2,
+        height / 2 + 50,
         texts[i - 1],
         color(86, 131, 153),
         callbacks[i - 1]
@@ -186,8 +186,7 @@ function mouseClicked() {
       break;
 
     case states.END:
-      resetGame();
-      state = states.PLAY;
+      state = states.TITLE;
       break;
   }
 }
