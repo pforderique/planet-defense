@@ -3,6 +3,10 @@ function randChoice(choices) {
   return choices[index];
 }
 
+function between(x, min, max) {
+  return x >= min && x <= max;
+}
+
 function createNewMeteor() {
   const radius = random(10, 40);
   const SIDEBUFFER = 100;
@@ -11,6 +15,22 @@ function createNewMeteor() {
   const y = -radius;
 
   return new Meteor(x, y, radius);
+}
+
+function drawTitleScreen(buttons) {
+  background(0);
+  textAlign(CENTER);
+  fill(255);
+
+  textSize(50);
+  text("Planet Defender", width / 2, 100);
+
+  textSize(25);
+  text("Select a difficulty", width / 2, 200);
+  textSize(15);
+  text("tip: double click to pause game", width / 2, height - 50);
+
+  for (const button of buttons) button.display();
 }
 
 function drawPauseScreen() {

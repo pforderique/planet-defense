@@ -25,14 +25,14 @@ const modes = {
   },
 };
 
-const MODE = modes.MEDIUM;
+let MODE;
+let MAX_METEORS;
+let METEOR_SPAWN_SPEED;
+let ROCKET_SPAWN_SPEED;
 const INCREASE_DIFFICULTY_RATE = 30 * 1000; // 30s
-let MAX_METEORS = MODE.maxMeteors;
-let METEOR_SPAWN_SPEED = MODE.meteorSpawnSpeed;
-let ROCKET_SPAWN_SPEED = MODE.rocketSpawnSpeed;
 
 const states = {
-  HOME: 1,
+  TITLE: 1,
   PLAY: 2,
   PAUSE: 3,
   END: 4,
@@ -47,12 +47,41 @@ let game_timer;
 let meteor_timer;
 let rocket_timer;
 let score;
+let gamemodeButtons = [];
 
 function setup() {
   SIZE = min(600, window.innerWidth);
+  textFont("cursive");
   createCanvas(SIZE, SIZE);
-  state = states.PLAY;
-  resetGame();
+  state = states.TITLE;
+
+  // create the game mode buttons
+  let texts = ["Easy", "Medium", "Hard", "Impossible"];
+  let callbacks = [
+    () => {
+      MODE = modes.EASY;
+    },
+    () => {
+      MODE = modes.MEDIUM;
+    },
+    () => {
+      MODE = modes.HARD;
+    },
+    () => {
+      MODE = modes.IMPOSSIBLE;
+    },
+  ];
+  for (let i = 1; i < 5; i++) {
+    gamemodeButtons.push(
+      new Button(
+        (i * width) / 5,
+        width / 2,
+        texts[i - 1],
+        color(86, 131, 153),
+        callbacks[i - 1]
+      )
+    );
+  }
 }
 
 function draw() {
@@ -61,6 +90,10 @@ function draw() {
 
 function gameFsm() {
   switch (state) {
+    case states.TITLE:
+      drawTitleScreen(gamemodeButtons);
+      break;
+
     case states.PLAY:
       if (playLoop()) state = states.END;
       break;
@@ -77,6 +110,7 @@ function gameFsm() {
 
 function playLoop() {
   background(0);
+  // console.log(MODE.meteorSpawnSpeed);
 
   // create a new rocket every now and then
   if (millis() - rocket_timer >= ROCKET_SPAWN_SPEED) {
@@ -135,6 +169,18 @@ function playLoop() {
 
 function mouseClicked() {
   switch (state) {
+    case states.TITLE:
+      for (const button of gamemodeButtons) {
+        // console.log(button.clicked());
+        if (button.clicked()) {
+          console.log(`button clicked: ${button.text}`);
+          state = states.PLAY;
+          button.click();
+          resetGame();
+        }
+      }
+      break;
+
     case states.PAUSE:
       state = states.PLAY;
       break;
